@@ -6,7 +6,7 @@ form.
 
 `TagType:Key1,Value1;Key2,Value2;Key3,Value3;`
 
-USage
+Usage
 =====
 
 -   Add the plugin to your project (e.g `MyProject/Plugins/UTags`)  
