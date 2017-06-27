@@ -9,7 +9,7 @@
 * Helper functions for manipulating tags with key value pairs
 * Correctly written tag example: "TagType:Key1,Value1;Key2,Value2;Key3,Value3;"
 */
-struct TagUtils
+struct FTagStatics
 {
 	// Return the index where the tag type was found in the array
 	static int32 FindTypeIndex(const TArray<FName>& InTags, const FString& TagType)
@@ -77,7 +77,7 @@ struct TagUtils
 	// Get tag key value pairs from actor
 	static TMap<FString, FString> GetKeyValuePairs(AActor* Actor, const FString& TagType)
 	{
-		return TagUtils::GetKeyValuePairs(Actor->Tags, TagType);
+		return FTagStatics::GetKeyValuePairs(Actor->Tags, TagType);
 	}
 
 	// Get all actors tag key value pairs from world
@@ -88,7 +88,7 @@ struct TagUtils
 		// Iterate all actors
 		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
 		{			
-			const TMap<FString, FString> TagProperties = TagUtils::GetKeyValuePairs(ActorItr->Tags, TagType);
+			const TMap<FString, FString> TagProperties = FTagStatics::GetKeyValuePairs(ActorItr->Tags, TagType);
 			// If actor has tag type and at least one property
 			if (TagProperties.Num() > 0)
 			{
@@ -123,10 +123,10 @@ struct TagUtils
 	static FString GetKeyValue(const TArray<FName>& InTags, const FString& TagType, const FString& TagKey)
 	{
 		// Check if type exists and return index of its location in the array
-		int32 TagIndex = TagUtils::FindTypeIndex(InTags, TagType);
+		int32 TagIndex = FTagStatics::FindTypeIndex(InTags, TagType);
 		if (TagIndex != INDEX_NONE)
 		{
-			return TagUtils::GetKeyValue(InTags[TagIndex], TagKey);
+			return FTagStatics::GetKeyValue(InTags[TagIndex], TagKey);
 		}
 
 		// If type was not found return an empty string
@@ -136,7 +136,7 @@ struct TagUtils
 	// Get tag key value from actor
 	static FString GetKeyValue(AActor* Actor, const FString& TagType, const FString& TagKey)
 	{
-		return TagUtils::GetKeyValue(Actor->Tags, TagType, TagKey);
+		return FTagStatics::GetKeyValue(Actor->Tags, TagType, TagKey);
 	}
 
 
@@ -173,10 +173,10 @@ struct TagUtils
 		bool bReplaceExisting = true)
 	{
 		// Check if type exists and return index of its location in the array
-		int32 TagIndex = TagUtils::FindTypeIndex(InTags, TagType);
+		int32 TagIndex = FTagStatics::FindTypeIndex(InTags, TagType);
 		if (TagIndex != INDEX_NONE)
 		{
-			return TagUtils::AddKeyValuePair(InTags[TagIndex], TagKey, TagValue, bReplaceExisting);
+			return FTagStatics::AddKeyValuePair(InTags[TagIndex], TagKey, TagValue, bReplaceExisting);
 		}
 
 		// If type was not found return false
@@ -191,6 +191,6 @@ struct TagUtils
 		const FString& TagValue,
 		bool bReplaceExisting = true)
 	{
-		return TagUtils::AddKeyValuePair(Actor->Tags, TagType, TagKey, TagValue, bReplaceExisting);
+		return FTagStatics::AddKeyValuePair(Actor->Tags, TagType, TagKey, TagValue, bReplaceExisting);
 	}
 };
