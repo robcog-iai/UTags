@@ -25,4 +25,4 @@ Usage
 		);  
     
 
--   Include `TagUtils.h` where you plan to use the  tag utils functions.
+-   Include `TagStatics.h` where you plan to use tag related functions.
