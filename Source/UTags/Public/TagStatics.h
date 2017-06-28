@@ -11,8 +11,9 @@
 */
 struct FTagStatics
 {
+	///////////////////////////////////////////////////////////////////////////
 	// Return the index where the tag type was found in the array
-	static int32 FindTypeIndex(const TArray<FName>& InTags, const FString& TagType)
+	static int32 GetTagTypeIndex(const TArray<FName>& InTags, const FString& TagType)
 	{
 		// Init tag index
 		int32 TagIndex = INDEX_NONE;
@@ -34,12 +35,13 @@ struct FTagStatics
 	}
 
 	// Return the index where the tag type was found in the array
-	static int32 FindTypeIndex(AActor* Actor, const FString& TagType)
+	static int32 GetTagTypeIndex(AActor* Actor, const FString& TagType)
 	{
-		return FindTypeIndex(Actor->Tags, TagType);
+		return GetTagTypeIndex(Actor->Tags, TagType);
 	}
 
 
+	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value pairs from tag array
 	static TMap<FString, FString> GetKeyValuePairs(const TArray<FName>& InTags, const FString& TagType)
 	{
@@ -80,8 +82,8 @@ struct FTagStatics
 		return FTagStatics::GetKeyValuePairs(Actor->Tags, TagType);
 	}
 
-	// Get all actors tag key value pairs from world
-	static TMap<AActor*, TMap<FString, FString>> GetAllActorsTagProperties(UWorld* World, const FString& TagType)
+	// Get all actors to tag key value pairs from world
+	static TMap<AActor*, TMap<FString, FString>> GetActorsToKeyValuePairs(UWorld* World, const FString& TagType)
 	{
 		// Map of actors to their tag properties
 		TMap<AActor*, TMap<FString, FString>> ActorToTagProperties;
@@ -99,6 +101,40 @@ struct FTagStatics
 	}
 
 
+	///////////////////////////////////////////////////////////////////////////
+	// Check if key exists in tag
+	static bool HasKey(const FName& InTag, const FString& TagKey)
+	{
+		// Check if key exist in tag
+		if (InTag.ToString().Find(TagKey) != INDEX_NONE)
+		{
+			return true;
+		}
+		// Key was not found, return false
+		return false;
+	}
+
+	// Check if key exists tag array
+	static bool HasKey(const TArray<FName>& InTags, const FString& TagType, const FString& TagKey)
+	{
+		// Check if type exists and return index of its location in the array
+		int32 TagIndex = FTagStatics::GetTagTypeIndex(InTags, TagType);
+		if (TagIndex != INDEX_NONE)
+		{
+			return FTagStatics::HasKey(InTags[TagIndex], TagKey);
+		}
+		// Type was not found, return false
+		return false;
+	}
+
+	// Check if key exists from actor
+	static bool HasKey(AActor* Actor, const FString& TagType, const FString& TagKey)
+	{
+		return FTagStatics::HasKey(Actor->Tags, TagType, TagKey);
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value from tag
 	static FString GetKeyValue(const FName& InTag, const FString& TagKey)
 	{
@@ -109,7 +145,7 @@ struct FTagStatics
 		int32 KeyPos = CurrTag.Find(TagKey);
 		if (KeyPos != INDEX_NONE)
 		{
-			// Remove fromt ag with the cut length of: pos of the key + length of the key + length of the comma char 
+			// Remove from tag with the cut length of: pos of the key + length of the key + length of the comma char 
 			CurrTag.RemoveAt(0, KeyPos + TagKey.Len() + 1);
 			// Set the tag value as the left side of the string before the semicolon
 			return CurrTag.Left(CurrTag.Find(";"));
@@ -123,7 +159,7 @@ struct FTagStatics
 	static FString GetKeyValue(const TArray<FName>& InTags, const FString& TagType, const FString& TagKey)
 	{
 		// Check if type exists and return index of its location in the array
-		int32 TagIndex = FTagStatics::FindTypeIndex(InTags, TagType);
+		int32 TagIndex = FTagStatics::GetTagTypeIndex(InTags, TagType);
 		if (TagIndex != INDEX_NONE)
 		{
 			return FTagStatics::GetKeyValue(InTags[TagIndex], TagKey);
@@ -140,6 +176,7 @@ struct FTagStatics
 	}
 
 
+	///////////////////////////////////////////////////////////////////////////
 	// Add tag key value from tags, if bReplaceExisting is true, replace existing value
 	static bool AddKeyValuePair(
 		FName& InTag,
@@ -173,7 +210,7 @@ struct FTagStatics
 		bool bReplaceExisting = true)
 	{
 		// Check if type exists and return index of its location in the array
-		int32 TagIndex = FTagStatics::FindTypeIndex(InTags, TagType);
+		int32 TagIndex = FTagStatics::GetTagTypeIndex(InTags, TagType);
 		if (TagIndex != INDEX_NONE)
 		{
 			return FTagStatics::AddKeyValuePair(InTags[TagIndex], TagKey, TagValue, bReplaceExisting);
