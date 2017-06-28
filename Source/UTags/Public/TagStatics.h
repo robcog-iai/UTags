@@ -42,66 +42,6 @@ struct FTagStatics
 
 
 	///////////////////////////////////////////////////////////////////////////
-	// Get tag key value pairs from tag array
-	static TMap<FString, FString> GetKeyValuePairs(const TArray<FName>& InTags, const FString& TagType)
-	{
-		// Map of the tag properties
-		TMap<FString, FString> TagProperties;
-
-		// Iterate all the tags, check for keyword TagType
-		for (const auto& TagItr : InTags)
-		{
-			// Copy of the current tag as FString
-			FString CurrTag = TagItr.ToString();
-
-			// Check if tag is related to the TagType
-			if (CurrTag.RemoveFromStart(TagType))
-			{
-				// Split on semicolon
-				FString CurrPair;
-				while (CurrTag.Split(TEXT(";"), &CurrPair, &CurrTag))
-				{
-					// Split on comma
-					FString CurrKey, CurrValue;
-					if (CurrPair.Split(TEXT(","), &CurrKey, &CurrValue))
-					{
-						if (!CurrKey.IsEmpty() && !CurrValue.IsEmpty())
-						{
-							TagProperties.Emplace(CurrKey, CurrValue);
-						}
-					}
-				}
-			}
-		}
-		return TagProperties;
-	}
-
-	// Get tag key value pairs from actor
-	static TMap<FString, FString> GetKeyValuePairs(AActor* Actor, const FString& TagType)
-	{
-		return FTagStatics::GetKeyValuePairs(Actor->Tags, TagType);
-	}
-
-	// Get all actors to tag key value pairs from world
-	static TMap<AActor*, TMap<FString, FString>> GetActorsToKeyValuePairs(UWorld* World, const FString& TagType)
-	{
-		// Map of actors to their tag properties
-		TMap<AActor*, TMap<FString, FString>> ActorToTagProperties;
-		// Iterate all actors
-		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
-		{			
-			const TMap<FString, FString> TagProperties = FTagStatics::GetKeyValuePairs(ActorItr->Tags, TagType);
-			// If actor has tag type and at least one property
-			if (TagProperties.Num() > 0)
-			{
-				ActorToTagProperties.Emplace(*ActorItr, TagProperties);
-			}
-		}
-		return ActorToTagProperties;
-	}
-
-
-	///////////////////////////////////////////////////////////////////////////
 	// Check if key exists in tag
 	static bool HasKey(const FName& InTag, const FString& TagKey)
 	{
@@ -131,6 +71,39 @@ struct FTagStatics
 	static bool HasKey(AActor* Actor, const FString& TagType, const FString& TagKey)
 	{
 		return FTagStatics::HasKey(Actor->Tags, TagType, TagKey);
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Check if key value pair exists in tag
+	static bool HasKeyValuePair(const FName& InTag, const FString& TagKey, const FString& TagValue)
+	{
+		// Check if key exist in tag
+		if (InTag.ToString().Find(TagKey + "," + TagValue) != INDEX_NONE)
+		{
+			return true;
+		}
+		// Key was not found, return false
+		return false;
+	}
+
+	// Check if key value pair exists in tag array
+	static bool HasKeyValuePair(const TArray<FName>& InTags, const FString& TagType, const FString& TagKey, const FString& TagValue)
+	{
+		// Check if type exists and return index of its location in the array
+		int32 TagIndex = FTagStatics::GetTagTypeIndex(InTags, TagType);
+		if (TagIndex != INDEX_NONE)
+		{
+			return FTagStatics::HasKeyValuePair(InTags[TagIndex], TagKey, TagValue);
+		}
+		// Type was not found, return false
+		return false;
+	}
+
+	// Check if key value pair exists in actor tags
+	static bool HasKeyValuePair(AActor* Actor, const FString& TagType, const FString& TagKey, const FString& TagValue)
+	{
+		return FTagStatics::HasKeyValuePair(Actor->Tags, TagType, TagKey, TagValue);
 	}
 
 
@@ -230,4 +203,84 @@ struct FTagStatics
 	{
 		return FTagStatics::AddKeyValuePair(Actor->Tags, TagType, TagKey, TagValue, bReplaceExisting);
 	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Get tag key value pairs from tag array
+	static TMap<FString, FString> GetKeyValuePairs(const TArray<FName>& InTags, const FString& TagType)
+	{
+		// Map of the tag properties
+		TMap<FString, FString> TagProperties;
+
+		// Iterate all the tags, check for keyword TagType
+		for (const auto& TagItr : InTags)
+		{
+			// Copy of the current tag as FString
+			FString CurrTag = TagItr.ToString();
+
+			// Check if tag is related to the TagType
+			if (CurrTag.RemoveFromStart(TagType))
+			{
+				// Split on semicolon
+				FString CurrPair;
+				while (CurrTag.Split(TEXT(";"), &CurrPair, &CurrTag))
+				{
+					// Split on comma
+					FString CurrKey, CurrValue;
+					if (CurrPair.Split(TEXT(","), &CurrKey, &CurrValue))
+					{
+						if (!CurrKey.IsEmpty() && !CurrValue.IsEmpty())
+						{
+							TagProperties.Emplace(CurrKey, CurrValue);
+						}
+					}
+				}
+			}
+		}
+		return TagProperties;
+	}
+
+	// Get tag key value pairs from actor
+	static TMap<FString, FString> GetKeyValuePairs(AActor* Actor, const FString& TagType)
+	{
+		return FTagStatics::GetKeyValuePairs(Actor->Tags, TagType);
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Get all actors to tag key value pairs from world
+	static TMap<AActor*, TMap<FString, FString>> GetActorsToKeyValuePairs(UWorld* World, const FString& TagType)
+	{
+		// Map of actors to their tag properties
+		TMap<AActor*, TMap<FString, FString>> ActorToTagProperties;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			const TMap<FString, FString> TagProperties = FTagStatics::GetKeyValuePairs(ActorItr->Tags, TagType);
+			// If actor has tag type and at least one property
+			if (TagProperties.Num() > 0)
+			{
+				ActorToTagProperties.Emplace(*ActorItr, TagProperties);
+			}
+		}
+		return ActorToTagProperties;
+	}
+
+	// Get all actors with the key value pair
+	static TArray<AActor*> GetActorsWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue)
+	{
+		// Array of actors
+		TArray<AActor*> ActorsWithKeyValuePair;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Add actor to array if it has tag type with key and value pair
+			if (FTagStatics::HasKeyValuePair(ActorItr->Tags, TagType, TagKey, TagValue))
+			{
+				ActorsWithKeyValuePair.Emplace(*ActorItr);
+			}
+		}
+		return ActorsWithKeyValuePair;
+	}
+
 };
