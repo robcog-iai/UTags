@@ -7,7 +7,13 @@
 
 /**
 * Helper functions for manipulating tags with key value pairs
-* Correctly written tag example: "TagType:Key1,Value1;Key2,Value2;Key3,Value3;"
+*
+*  Correctly written tag example ["TagType;Key1,Value1;Key2,Value2;Key3,Value3;"]:
+*  - first word represents the TagType, this is followed by a semicolon
+*  - separate the [Key] from the [Value] using a comma 
+*  - separate the [Key,Value]-pairs using a semicolon
+*  - end the tag description with a semicolon
+*  - do NOT use white spaces in the tag descriptions
 */
 struct FTagStatics
 {
@@ -17,7 +23,7 @@ struct FTagStatics
 	{
 		// Init tag index
 		int32 TagIndex = INDEX_NONE;
-
+		
 		// Iterate all the tags, check for keyword TagType
 		for (const auto& TagItr : InTags)
 		{
@@ -46,7 +52,7 @@ struct FTagStatics
 	static bool HasKey(const FName& InTag, const FString& TagKey)
 	{
 		// Check if key exist in tag
-		if (InTag.ToString().Find(TagKey) != INDEX_NONE)
+		if (InTag.ToString().Find(";" + TagKey) != INDEX_NONE)
 		{
 			return true;
 		}
@@ -79,7 +85,7 @@ struct FTagStatics
 	static bool HasKeyValuePair(const FName& InTag, const FString& TagKey, const FString& TagValue)
 	{
 		// Check if key exist in tag
-		if (InTag.ToString().Find(TagKey + "," + TagValue) != INDEX_NONE)
+		if (InTag.ToString().Find(";" + TagKey + "," + TagValue) != INDEX_NONE)
 		{
 			return true;
 		}
@@ -115,15 +121,15 @@ struct FTagStatics
 		FString CurrTag = InTag.ToString();
 
 		// Check the position of the key string in the tag
-		int32 KeyPos = CurrTag.Find(TagKey);
+		int32 KeyPos = CurrTag.Find(";" + TagKey);
 		if (KeyPos != INDEX_NONE)
 		{
-			// Remove from tag with the cut length of: pos of the key + length of the key + length of the comma char 
-			CurrTag.RemoveAt(0, KeyPos + TagKey.Len() + 1);
+			// Remove from tag with the cut length of: 
+			// pos of the key + length of the semicolon char + length of the key + length of the comma char 
+			CurrTag.RemoveAt(0, KeyPos + 1 + TagKey.Len() + 1);
 			// Set the tag value as the left side of the string before the semicolon
 			return CurrTag.Left(CurrTag.Find(";"));
 		}
-
 		// Return empty string if key was not found
 		return FString();
 	}
@@ -157,11 +163,11 @@ struct FTagStatics
 		const FString& TagValue,
 		bool bReplaceExisting = true)
 	{
-		// Get the key value
+		// Get the key value		
 		FString CurrVal = GetKeyValue(InTag, TagKey);
 		if (CurrVal.IsEmpty())
 		{
-			// Key does not exist, add new one
+			// Key does not exist, add new one at the end
 			InTag = FName(*InTag.ToString().Append(TagKey).Append(",").Append(TagValue).Append(";"));
 			return true;
 		}
@@ -171,6 +177,7 @@ struct FTagStatics
 			InTag = FName(*InTag.ToString().Replace(*CurrVal, *TagValue));
 			return true;
 		}
+		// Do not replace, return false
 		return false;
 	}
 
@@ -188,8 +195,7 @@ struct FTagStatics
 		{
 			return FTagStatics::AddKeyValuePair(InTags[TagIndex], TagKey, TagValue, bReplaceExisting);
 		}
-
-		// If type was not found return false
+		// Type was not found, return false
 		return false;
 	}
 

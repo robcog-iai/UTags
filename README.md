@@ -4,7 +4,13 @@ UTags
 Plugin with helper functions for editing data stored in tags in key-value pair
 form.
 
-`TagType:Key1,Value1;Key2,Value2;Key3,Value3;`
+`TagType;Key1,Value1;Key2,Value2;Key3,Value3;`
+
+* first word always represents the `TagType`, this is followed by a `semicolon`
+* separate the `[Key]` from the `[Value]` using a `comma`
+* separate the `[Key,Value]`-pairs using a `semicolon`
+* end the tag description with a `semicolon`
+* do NOT use white spaces in the tag descriptions
 
 Usage
 =====
@@ -26,3 +32,26 @@ Usage
     
 
 -   Include `TagStatics.h` where you plan to use tag related functions.
+
+Examples
+=====
+
+Tag: 
+	
+	`SemLog;Runtime,Static;Id,3rFg;Class,Sink;`
+
+Generate new Ids for all actors with the `TagType` `SemLog`:
+
+	static FReply GenerateNewIds()
+	{
+		for (TActorIterator<AActor> ActItr(GEditor->GetEditorWorldContext().World()); ActItr; ++ActItr)
+		{
+			int32 TagIndex = FTagStatics::GetTagTypeIndex(*ActItr, "SemLog");
+			if (TagIndex != INDEX_NONE)
+			{
+				FTagStatics::AddKeyValuePair(
+					ActItr->Tags[TagIndex], "Id", FSLStatics::GenerateRandomFString(4));
+			}
+		}
+		return FReply::Handled();
+	}
