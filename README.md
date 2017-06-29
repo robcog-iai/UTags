@@ -4,7 +4,7 @@ UTags
 Plugin with helper functions for editing data stored in tags in key-value pair
 form.
 
-`TagType;Key1,Value1;Key2,Value2;Key3,Value3;`
+[`TagType;Key1,Value1;Key2,Value2;Key3,Value3;`]
 
 * first word always represents the `TagType`, this is followed by a `semicolon`
 * separate the `[Key]` from the `[Value]` using a `comma`
@@ -38,10 +38,11 @@ Examples
 
 Tag: 
 	
-	`SemLog;Runtime,Static;Id,3rFg;Class,Sink;`
+[`SemLog;Runtime,Static;Id,3rFg;Class,Sink;`]
 
-Generate new Ids for all actors with the `TagType` `SemLog`:
+Generating new Ids for all the actors with the `TagType` `SemLog`:
 
+```cpp
 	static FReply GenerateNewIds()
 	{
 		for (TActorIterator<AActor> ActItr(GEditor->GetEditorWorldContext().World()); ActItr; ++ActItr)
@@ -55,3 +56,4 @@ Generate new Ids for all actors with the `TagType` `SemLog`:
 		}
 		return FReply::Handled();
 	}
+```
