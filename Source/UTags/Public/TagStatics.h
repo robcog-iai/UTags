@@ -9,10 +9,10 @@
 * Helper functions for manipulating tags with key value pairs
 *
 *  Correctly written tag example ["TagType;Key1,Value1;Key2,Value2;Key3,Value3;"]:
-*  - first word represents the TagType, this is followed by a semicolon
+*  - first word always represents the TagType, this is followed by a semicolon
 *  - separate the [Key] from the [Value] using a comma 
 *  - separate the [Key,Value]-pairs using a semicolon
-*  - end the tag description with a semicolon
+*  - always end the tag description with a semicolon
 *  - do NOT use white spaces in the tag descriptions
 */
 struct FTagStatics
