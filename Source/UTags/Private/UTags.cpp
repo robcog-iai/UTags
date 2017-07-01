@@ -3,6 +3,9 @@
 
 #include "UTags.h"
 
+// Define logging types
+DEFINE_LOG_CATEGORY(LogTags);
+
 #define LOCTEXT_NAMESPACE "FUTagsModule"
 
 void FUTagsModule::StartupModule()
