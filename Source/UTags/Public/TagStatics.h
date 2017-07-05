@@ -289,7 +289,27 @@ struct FTagStatics
 		return ActorsWithKeyValuePair;
 	}
 
+	// Get all actors with the key value pair
 	static TSet<AActor*> GetActorSetWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue) {
 		return TSet<AActor*>(GetActorsWithKeyValuePair(World, TagType, TagKey, TagValue));
+	}
+
+	// Gets all components with the key value pair
+	static TSet<UActorComponent*> GetComponentSetWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue)
+	{
+		TSet<UActorComponent*> ComponentsWithTag;
+
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			for (auto& Component : ActorItr->GetComponents())
+			{
+				if (FTagStatics::HasKeyValuePair(Component->ComponentTags, TagType, TagKey, TagValue))
+				{
+					ComponentsWithTag.Add(Component);
+				}
+			}
+		}
+
+		return ComponentsWithTag;
 	}
 };
