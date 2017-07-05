@@ -289,4 +289,7 @@ struct FTagStatics
 		return ActorsWithKeyValuePair;
 	}
 
+	static TSet<AActor*> GetActorSetWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue) {
+		return TSet<AActor*>(GetActorsWithKeyValuePair(World, TagType, TagKey, TagValue));
+	}
 };
