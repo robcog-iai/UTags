@@ -311,6 +311,28 @@ struct FTagStatics
 		return ActorToTagProperties;
 	}
 
+	// Get all components to tag key value pairs from world
+	static TMap<UActorComponent*, TMap<FString, FString>> GetComponentsToKeyValuePairs(UWorld* World, const FString& TagType)
+	{
+		// Map of actors to their tag properties
+		TMap<UActorComponent*, TMap<FString, FString>> ComponentToTagProperties;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Iterate components of the actor
+			for (const auto& CompItr : ActorItr->GetComponents())
+			{
+				const TMap<FString, FString> TagProperties = FTagStatics::GetKeyValuePairs(CompItr->ComponentTags, TagType);
+				// If tag type has at least one property
+				if (TagProperties.Num() > 0)
+				{
+					ComponentToTagProperties.Emplace(CompItr, TagProperties);
+				}
+			}
+		}
+		return ComponentToTagProperties;
+	}
+
 	// Get all actors with the key value pair as array
 	static TArray<AActor*> GetActorsWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue)
 	{
