@@ -19,6 +19,7 @@ struct FTagStatics
 {
 	///////////////////////////////////////////////////////////////////////////
 	// Return the index where the tag type was found in the array
+
 	static int32 GetTagTypeIndex(const TArray<FName>& InTags, const FString& TagType)
 	{
 		// Init tag index
@@ -55,6 +56,7 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Check if key exists in tag
+
 	static bool HasKey(const FName& InTag, const FString& TagKey)
 	{
 		// Check if key exist in tag
@@ -93,6 +95,7 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Check if key value pair exists in tag
+
 	static bool HasKeyValuePair(const FName& InTag, const FString& TagKey, const FString& TagValue)
 	{
 		// Check if key exist in tag
@@ -131,6 +134,7 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value from tag
+
 	static FString GetKeyValue(const FName& InTag, const FString& TagKey)
 	{
 		// Copy of the current tag as FString
@@ -179,6 +183,7 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Add tag key value from tags, if bReplaceExisting is true, replace existing value
+
 	static bool AddKeyValuePair(
 		FName& InTag,
 		const FString& TagKey,
@@ -246,6 +251,7 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value pairs from tag array
+
 	static TMap<FString, FString> GetKeyValuePairs(const TArray<FName>& InTags, const FString& TagType)
 	{
 		// Map of the tag properties
@@ -293,6 +299,7 @@ struct FTagStatics
 
 
 	///////////////////////////////////////////////////////////////////////////
+	
 	// Get all actors to tag key value pairs from world
 	static TMap<AActor*, TMap<FString, FString>> GetActorsToKeyValuePairs(UWorld* World, const FString& TagType)
 	{
@@ -367,7 +374,6 @@ struct FTagStatics
 		return ActorsWithKeyValuePair;
 	}
 
-
 	// Get all components with the key value pair as array
 	static TArray<UActorComponent*> GetComponentsWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue)
 	{
@@ -413,6 +419,7 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////
 	// Get all actors with the key value pair
+	
 	static TSet<AActor*> GetActorSetWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue) 
 	{
 		return TSet<AActor*>(GetActorsWithKeyValuePair(World, TagType, TagKey, TagValue));
