@@ -80,3 +80,5 @@ Get a map of actors or components to their tag properties giving the world as an
 	const TMap<UActorComponent*, TMap<FString, FString>> ComponentToTagProperties =
 	FTagStatics::GetComponentsToKeyValuePairs(World, "SemLog");
 ```
+
+### Engine Version 4.18
