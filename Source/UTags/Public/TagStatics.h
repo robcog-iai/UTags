@@ -19,7 +19,6 @@ struct FTagStatics
 {
 	///////////////////////////////////////////////////////////////////////////
 	// Return the index where the tag type was found in the array
-
 	static int32 GetTagTypeIndex(const TArray<FName>& InTags, const FString& TagType)
 	{
 		// Init tag index
@@ -56,7 +55,6 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Check if key exists in tag
-
 	static bool HasKey(const FName& InTag, const FString& TagKey)
 	{
 		// Check if key exist in tag
@@ -95,7 +93,6 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Check if key value pair exists in tag
-
 	static bool HasKeyValuePair(const FName& InTag, const FString& TagKey, const FString& TagValue)
 	{
 		// Check if key exist in tag
@@ -134,7 +131,6 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value from tag
-
 	static FString GetKeyValue(const FName& InTag, const FString& TagKey)
 	{
 		// Copy of the current tag as FString
@@ -183,7 +179,6 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Add tag key value from tags, if bReplaceExisting is true, replace existing value
-
 	static bool AddKeyValuePair(
 		FName& InTag,
 		const FString& TagKey,
@@ -251,7 +246,6 @@ struct FTagStatics
 
 	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value pairs from tag array
-
 	static TMap<FString, FString> GetKeyValuePairs(const TArray<FName>& InTags, const FString& TagType)
 	{
 		// Map of the tag properties
@@ -330,7 +324,6 @@ struct FTagStatics
 		return ObjectToTagProperties;
 	}
 
-
 	// Get all actors to tag key value pairs from world
 	static TMap<AActor*, TMap<FString, FString>> GetActorsToKeyValuePairs(UWorld* World, const FString& TagType)
 	{
@@ -371,6 +364,77 @@ struct FTagStatics
 		return ComponentToTagProperties;
 	}
 
+	/////////////////////////////////////////////////////////////////////////
+	// Get all objects (actor and actor components) to tag key value
+	static TMap<UObject*, FString> GetObjectsToKeyValue(UWorld* World, const FString& TagType, const FString& TagKey)
+	{
+		// Map of actors to their tag properties
+		TMap<UObject*, FString> ObjectsToKeyValue;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Add to map if key is found in the actor
+			FString Value = FTagStatics::GetKeyValue(*ActorItr, TagType, TagKey);
+			if (!Value.IsEmpty())
+			{
+				ObjectsToKeyValue.Emplace(*ActorItr, Value);
+			}
+
+			// Iterate components of the actor
+			for (const auto& CompItr : ActorItr->GetComponents())
+			{
+				// Add to map if key is found in the actor
+				FString Value = FTagStatics::GetKeyValue(CompItr, TagType, TagKey);
+				if (!Value.IsEmpty())
+				{
+					ObjectsToKeyValue.Emplace(CompItr, Value);
+				}
+			}
+		}
+		return ObjectsToKeyValue;
+	}
+
+	// Get all actors to tag key value
+	static TMap<AActor*, FString> GetActorsToKeyValue(UWorld* World, const FString& TagType, const FString& TagKey)
+	{
+		// Map of actors to their tag properties
+		TMap<AActor*, FString> ActorsToKeyValue;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Add to map if key is found in the actor
+			FString Value = FTagStatics::GetKeyValue(*ActorItr, TagType, TagKey);
+			if (!Value.IsEmpty())
+			{
+				ActorsToKeyValue.Emplace(*ActorItr, Value);
+			}
+		}
+		return ActorsToKeyValue;
+	}
+
+	// Get all components to tag key value
+	static TMap<UActorComponent*, FString> GetComponentsToKeyValue(UWorld* World, const FString& TagType, const FString& TagKey)
+	{
+		// Map of actors to their tag properties
+		TMap<UActorComponent*, FString> ComponentsToKeyValue;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Iterate components of the actor
+			for (const auto& CompItr : ActorItr->GetComponents())
+			{
+				// Add to map if key is found in the actor
+				FString Value = FTagStatics::GetKeyValue(CompItr, TagType, TagKey);
+				if (!Value.IsEmpty())
+				{
+					ComponentsToKeyValue.Emplace(CompItr, Value);
+				}
+			}
+		}
+		return ComponentsToKeyValue;
+	}
+
+	///////////////////////////////////////////////////////////////////////////
 	// Get all actors with the key value pair as array
 	static TArray<AActor*> GetActorsWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue)
 	{
@@ -446,11 +510,10 @@ struct FTagStatics
 		}
 		return ComponentsWithKeyValuePair;
 	}
-
+	
 
 	///////////////////////////////////////////////////////////
-	// Get all actors with the key value pair
-	
+	// Get all actors with the key value pair	
 	static TSet<AActor*> GetActorSetWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue) 
 	{
 		return TSet<AActor*>(GetActorsWithKeyValuePair(World, TagType, TagKey, TagValue));
@@ -471,7 +534,6 @@ struct FTagStatics
 				}
 			}
 		}
-
 		return ComponentsWithTag;
 	}
 };
