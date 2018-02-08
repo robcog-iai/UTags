@@ -436,10 +436,10 @@ struct FTagStatics
 
 	/////////////////////////////////////////////////////////////////////////
 	// Get key values to objects (actor and actor components)
-	static TMap<FString, UObject> GetKeyValuesToObject(UWorld* World, const FString& TagType, const FString& TagKey)
+	static TMap<FString, UObject*> GetKeyValuesToObject(UWorld* World, const FString& TagType, const FString& TagKey)
 	{
 		// Map of actors to their tag properties
-		TMap<FString, UObject> KeyValuesToObjects;
+		TMap<FString, UObject*> KeyValuesToObjects;
 		// Iterate all actors
 		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
 		{
