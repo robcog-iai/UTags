@@ -434,6 +434,77 @@ struct FTagStatics
 		return ComponentsToKeyValue;
 	}
 
+	/////////////////////////////////////////////////////////////////////////
+	// Get key values to objects (actor and actor components)
+	static TMap<FString, UObject> GetKeyValuesToObject(UWorld* World, const FString& TagType, const FString& TagKey)
+	{
+		// Map of actors to their tag properties
+		TMap<FString, UObject> KeyValuesToObjects;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Add to map if key is found in the actor
+			FString Value = FTagStatics::GetKeyValue(*ActorItr, TagType, TagKey);
+			if (!Value.IsEmpty())
+			{
+				KeyValuesToObjects.Emplace(Value, *ActorItr);
+			}
+
+			// Iterate components of the actor
+			for (const auto& CompItr : ActorItr->GetComponents())
+			{
+				// Add to map if key is found in the actor
+				FString Value = FTagStatics::GetKeyValue(CompItr, TagType, TagKey);
+				if (!Value.IsEmpty())
+				{
+					KeyValuesToObjects.Emplace(Value, CompItr);
+				}
+			}
+		}
+		return KeyValuesToObjects;
+	}
+
+	// Get tag key values to actors
+	static TMap<FString, AActor*> GetKeyValuesToActor(UWorld* World, const FString& TagType, const FString& TagKey)
+	{
+		// Map of actors to their tag properties
+		TMap<FString, AActor*> KeyValuesToActor;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Add to map if key is found in the actor
+			FString Value = FTagStatics::GetKeyValue(*ActorItr, TagType, TagKey);
+			if (!Value.IsEmpty())
+			{
+				KeyValuesToActor.Emplace(Value, *ActorItr);
+			}
+		}
+		return KeyValuesToActor;
+	}
+
+	// Get tag key values to components
+	static TMap<FString, UActorComponent*> GetKeyValuesToComponents(UWorld* World, const FString& TagType, const FString& TagKey)
+	{
+		// Map of actors to their tag properties
+		TMap<FString, UActorComponent*> KeyValuesToComponents;
+		// Iterate all actors
+		for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+		{
+			// Iterate components of the actor
+			for (const auto& CompItr : ActorItr->GetComponents())
+			{
+				// Add to map if key is found in the actor
+				FString Value = FTagStatics::GetKeyValue(CompItr, TagType, TagKey);
+				if (!Value.IsEmpty())
+				{
+					KeyValuesToComponents.Emplace(Value, CompItr);
+				}
+			}
+		}
+		return KeyValuesToComponents;
+	}
+
+
 	///////////////////////////////////////////////////////////////////////////
 	// Get all actors with the key value pair as array
 	static TArray<AActor*> GetActorsWithKeyValuePair(UWorld* World, const FString& TagType, const FString& TagKey, const FString& TagValue)
