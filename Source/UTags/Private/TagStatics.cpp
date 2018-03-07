@@ -195,7 +195,12 @@ bool FTagStatics::AddKeyValuePair(TArray<FName>& InTags, const FString& TagType,
 	{
 		return FTagStatics::AddKeyValuePair(InTags[TagIndex], TagKey, TagValue, bReplaceExisting);
 	}
-	// Type was not found, return false
+	else // Type was not found, create a new one
+	{
+		FString NewTag;
+		InTags.Add(FName(*NewTag.Append(TagType).Append(":").Append(TagKey).Append(",").Append(TagValue).Append(";")));
+		return true;
+	}
 	return false;
 }
 
