@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "UTags",
-	"Description": "Util functions for editing key values pairs in tags",
+	"Description": "Util functions for editing key values pairs in Actor or Component Tags",
 	"Category": "RobCoG",
 	"CreatedBy": "Andrei Haidu",
 	"CreatedByURL": "http://haidu.eu/",
