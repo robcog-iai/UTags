@@ -89,6 +89,23 @@ struct UTAGS_API FTagStatics
 
 
 	///////////////////////////////////////////////////////////////////////////
+	// Remove tag key value from tags
+	static bool RemoveKeyValuePair(FName& InTag, const FString& TagKey);
+
+	// Remove tag key value from tags
+	static bool RemoveKeyValuePair(TArray<FName>& InTags, const FString& TagType, const FString& TagKey);
+
+	// Remove tag key value from actor
+	static bool RemoveKeyValuePair(AActor* Actor, const FString& TagType, const FString& TagKey);
+
+	// Remove tag key value from component
+	static bool RemoveKeyValuePair(UActorComponent* Component, const FString& TagType, const FString& TagKey);
+
+	// Remove all tag key values from world
+	static bool RemoveKeyValuePairs(UWorld* World, const FString& TagType, const FString& TagKey);
+
+
+	///////////////////////////////////////////////////////////////////////////
 	// Get tag key value pairs from tag array
 	static TMap<FString, FString> GetKeyValuePairs(const TArray<FName>& InTags, const FString& TagType);
 

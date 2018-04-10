@@ -168,7 +168,7 @@ FString FTagStatics::GetKeyValue(UActorComponent* Component, const FString& TagT
 // Add tag key value from tags, if bReplaceExisting is true, replace existing value
 bool FTagStatics::AddKeyValuePair(FName& InTag, const FString& TagKey, const FString& TagValue, bool bReplaceExisting)
 {
-	// Get the key value		
+	// Get the key value
 	FString CurrVal = GetKeyValue(InTag, TagKey);
 	if (CurrVal.IsEmpty())
 	{
@@ -214,6 +214,66 @@ bool FTagStatics::AddKeyValuePair(AActor* Actor, const FString& TagType, const F
 bool FTagStatics::AddKeyValuePair(UActorComponent* Component, const FString& TagType, const FString& TagKey, const FString& TagValue, bool bReplaceExisting)
 {
 	return FTagStatics::AddKeyValuePair(Component->ComponentTags, TagType, TagKey, TagValue, bReplaceExisting);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// Remove tag key value from tag
+bool FTagStatics::RemoveKeyValuePair(FName& InTag, const FString& TagKey)
+{
+	// Copy of the current tag as FString
+	FString CurrTag = InTag.ToString();
+	const FString ToRemove = TagKey + TEXT(",") + GetKeyValue(InTag, TagKey) + TEXT(";");
+	int32 FindPos = CurrTag.Find(ToRemove, ESearchCase::CaseSensitive);
+	if (FindPos != INDEX_NONE)
+	{
+		CurrTag.RemoveAt(FindPos, ToRemove.Len());
+		InTag = FName(*CurrTag);
+	}
+	// "TagKey,TagValue;" combo could not be found
+	return false;
+}
+
+// Remove tag key value from tags
+bool FTagStatics::RemoveKeyValuePair(TArray<FName>& InTags, const FString& TagType, const FString& TagKey)
+{
+	// Check if type exists and return index of its location in the array
+	int32 TagIndex = FTagStatics::GetTagTypeIndex(InTags, TagType);
+	if (TagIndex != INDEX_NONE)
+	{
+		return FTagStatics::RemoveKeyValuePair(InTags[TagIndex], TagKey);
+	}
+	// Tag type not found, nothing to remove
+	return false;
+}
+
+// Remove tag key value from actor
+bool FTagStatics::RemoveKeyValuePair(AActor* Actor, const FString& TagType, const FString& TagKey)
+{
+	return FTagStatics::RemoveKeyValuePair(Actor->Tags, TagType, TagKey);;
+}
+
+// Remove tag key value from component
+bool FTagStatics::RemoveKeyValuePair(UActorComponent* Component, const FString& TagType, const FString& TagKey)
+{
+	return FTagStatics::RemoveKeyValuePair(Component->ComponentTags, TagType, TagKey);
+}
+
+// Remove all tag key values from world
+bool FTagStatics::RemoveKeyValuePairs(UWorld* World, const FString& TagType, const FString& TagKey)
+{
+	// Iterate actors from world
+	for (TActorIterator<AActor> ActorItr(World); ActorItr; ++ActorItr)
+	{
+		FTagStatics::RemoveKeyValuePair(*ActorItr, TagType, TagKey);
+
+		// Iterate components of the actor
+		for (const auto& CompItr : ActorItr->GetComponents())
+		{
+			FTagStatics::RemoveKeyValuePair(CompItr, TagType, TagKey);
+		}
+	}
+	return true;
 }
 
 
