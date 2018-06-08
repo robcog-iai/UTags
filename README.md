@@ -6,6 +6,9 @@ key-value pair form. The plugin has various functions to ease the access for suc
 
 Supported engine version: **UE 4.19**
 
+Rules
+======
+
 Example of storing key-value pairs:
 
 [`TagType;Key1,Value1;Key2,Value2;Key3,Value3;`]
