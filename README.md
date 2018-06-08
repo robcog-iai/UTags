@@ -4,14 +4,16 @@ UTags
 Using the built in Tag functionalities of Actors and Components to store data in a 
 key-value pair form. The plugin has various functions to ease the access for such data.
 
+Supported engine version: **UE 4.19**
+
 Example of storing key-value pairs:
 
 [`TagType;Key1,Value1;Key2,Value2;Key3,Value3;`]
 
 * first word always represents the `TagType`, this is followed by a `semicolon`
-* separate the `[Key]` from the `[Value]` using a `comma`: **,**
-* separate the `[Key,Value]`-pairs using a `semicolon`: **;**
-* always end the tag description with a `semicolon`: **;**
+* separate the `[Key]` from the `[Value]` using a `comma` **,**
+* separate the `[Key,Value]`-pairs using a `semicolon` **;**
+* always end the tag description with a `semicolon` **;**
 * do NOT use white spaces in the tag descriptions
 
 How to add tags to an actor:
@@ -83,5 +85,3 @@ Get a map of actors or components to their tag properties giving the world as an
 	// Get all objects with TF tags
 	auto ObjToTagData = FTagStatics::GetObjectsToKeyValuePairs(GetWorld(), TEXT("TF"));
 ```
-
-### Engine Version 4.18
